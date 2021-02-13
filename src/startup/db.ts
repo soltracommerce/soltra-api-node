@@ -3,8 +3,15 @@ import logger from "../startup/logger";
 import colors from "colors/safe";
 
 const connectDB = async () => {
+  let MONGO_URI;
+  if (process.env.NODE_ENV === "development") {
+    MONGO_URI = process.env.MONGO_URI_DEV;
+  }
+  if (process.env.NODE_ENV === "test") {
+    MONGO_URI = process.env.MONGO_URI_TEST;
+  }
   try {
-    const conn = await mongoose.connect(`${process.env.MONGO_URI}`, {
+    const conn = await mongoose.connect(`${MONGO_URI}`, {
       useNewUrlParser: true,
       useCreateIndex: true,
       useUnifiedTopology: true,
