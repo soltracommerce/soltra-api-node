@@ -26,7 +26,7 @@ process.on("unhandledRejection", (ex: Error) => {
   process.exit(1);
 });
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 5000;
 const server = app.listen(port, () =>
   logger.info(colors.yellow(`listening on port ${port}`))
 );

@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import logger from "./../startup/logger";
 
 interface mailOptions {
   email: string;
@@ -15,9 +16,8 @@ const smtpOptions = {
   },
 };
 
-
 const sendEMail = async (mailOptions: mailOptions) => {
-const transporter = nodemailer.createTransport(smtpOptions as any);
+  const transporter = nodemailer.createTransport(smtpOptions as any);
 
   const message = {
     from: `${process.env.FROM_NAME} <${process.env.FROM_EMAIL}>`,
@@ -27,6 +27,8 @@ const transporter = nodemailer.createTransport(smtpOptions as any);
   };
 
   const info = await transporter.sendMail(message);
+  return info;
+
 };
 
 export default sendEMail;

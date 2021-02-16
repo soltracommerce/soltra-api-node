@@ -28,7 +28,7 @@ describe("Register User", () => {
     return request(server).post("/api/v1/auth/register").send(reqBody);
   };
 
-  it("should return please include a valid email if email is not valid", async () => {
+  it("should return firstname is required if firstname is not given", async () => {
     const res: any = await exec({
       firstname: "",
       lastname: "",
@@ -37,9 +37,39 @@ describe("Register User", () => {
     });
     expect(res.status).toBe(400);
     expect(res.body.errors[0].msg).toBe("Firstname is required");
-    expect(res.body.errors[1].msg).toBe("Lastname is required");
-    expect(res.body.errors[2].msg).toBe("Please include a valid email");
-    expect(res.body.errors[3].msg).toBe(
+  });
+
+  it("should return lastname is required if lastname is not given", async () => {
+    const res: any = await exec({
+      firstname: "Joan",
+      lastname: "",
+      email: "joanbagovic@gmail.com",
+      password: "1234567",
+    });
+    expect(res.status).toBe(400);
+    expect(res.body.errors[0].msg).toBe("Lastname is required");
+  });
+
+  it("should return please include a valid email if email is not valid", async () => {
+    const res: any = await exec({
+      firstname: "Joan",
+      lastname: "Begovic",
+      email: "",
+      password: "1234567",
+    });
+    expect(res.status).toBe(400);
+    expect(res.body.errors[0].msg).toBe("Please include a valid email");
+  });
+
+  it("should return password please enter a password with 6 or more characters password is not up to 6 characters ", async () => {
+    const res: any = await exec({
+      firstname: "Kelvin",
+      lastname: "Smith",
+      email: "kelvinsmith@gmail.com",
+      password: "12345",
+    });
+    expect(res.status).toBe(400);
+    expect(res.body.errors[0].msg).toBe(
       "Please enter a password with 6 or more characters"
     );
   });

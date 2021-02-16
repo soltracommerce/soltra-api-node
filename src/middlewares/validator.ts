@@ -1,18 +1,13 @@
-import { check } from "express-validator";
+import { Response, Request, NextFunction } from "express";
+import { validationResult } from "express-validator";
+import ErrorResponse from "../exceptions/httpException";
 
-export const validateUser = [
-  check("firstname", "Firstname is required").not().isEmpty(),
-  check("lastname", "Lastname is required").not().isEmpty(),
-  check("email", "Please include a valid email").isEmail(),
-  check(
-    "password",
-    "Please enter a password with 6 or more characters"
-  ).isLength({
-    min: 6,
-  }),
-];
+const validate = (req: Request, res: Response, next: NextFunction) => {
+  const errors = validationResult(req);
+  if (errors.isEmpty()) {
+    return next();
+  }
+  errors.array().map((err) => next(new ErrorResponse(400, `${err.msg}`)));
+};
 
-export const validateLogin = [
-  check("email", "Please include a valid email").isEmail(),
-  check("password", "Password is required").exists(),
-];
+export default validate;

@@ -32,7 +32,7 @@ describe("Login User", () => {
   });
 
   it("should return Invalid Email or Password if email or password do not exist", async () => {
-    const res: any = await exec("test123@gmail.com", "12345");
+    const res: any = await exec("test123@gmail.com", "123457891");
     expect(res.status).toBe(400);
     expect(res.body.errors[0].msg).toBe("Invalid Email or Password");
   });

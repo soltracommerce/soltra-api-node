@@ -3,16 +3,24 @@ import jwt, { Secret } from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
-interface IUser extends Document {
+export interface IUser extends Document {
   firstname: string;
   lastname: string;
   email: string;
   isAdmin: boolean;
   password: string;
   isEmailVerified: boolean;
+  verifyEmailExpire: number | undefined;
   verifyEmailToken: string | undefined;
   resetPasswordToken: string | undefined;
   resetPasswordExpire: number | undefined;
+}
+
+export interface UserBaseDocument extends IUser {
+  getEmailVerificationToken(): string;
+  comparePasswords(password: string): boolean;
+  getSignedJWT(): string;
+  getResetPasswordToken(): string;
 }
 
 const userSchema = new Schema(
@@ -110,4 +118,4 @@ userSchema.methods.getResetPasswordToken = function () {
   return resetToken;
 };
 
-export default model<IUser>("User", userSchema);
+export default model<UserBaseDocument>("User", userSchema);
