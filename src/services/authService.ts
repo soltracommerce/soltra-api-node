@@ -1,4 +1,4 @@
-import { Request, NextFunction, response } from "express";
+import { Request, NextFunction} from "express";
 import crypto from "crypto";
 import {
   CreateUserDTO,

@@ -22,3 +22,22 @@ export const validateLoginRules = () => {
     }),
   ];
 };
+
+export const validateProductRules = () => {
+  return [
+    check("name", "Product's name is required").not().isEmpty(),
+    check("description", "Product's description is required").not().isEmpty(),
+    check("brand", "Product's brand is required").not().isEmpty(),
+    check("category", "Product's category is required").not().isEmpty(),
+    check("quantity", "Product's quantity is required").isNumeric().notEmpty(),
+    check("rating", "Product's rating is required").isNumeric().notEmpty(),
+    check("price", "Price of product is required").isNumeric().notEmpty(),
+  ];
+};
+
+export const validateShopRules = () => {
+  return [
+    check("name", "Product's name is required").not().isEmpty(),
+    check("description", "Product's description is required").not().isEmpty(),
+  ];
+};

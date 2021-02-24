@@ -1,5 +1,4 @@
 import nodemailer from "nodemailer";
-import logger from "./../startup/logger";
 
 interface mailOptions {
   email: string;
