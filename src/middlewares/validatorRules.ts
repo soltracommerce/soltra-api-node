@@ -41,3 +41,4 @@ export const validateShopRules = () => {
     check("description", "Product's description is required").not().isEmpty(),
   ];
 };
+

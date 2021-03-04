@@ -5,13 +5,17 @@ import { IUser } from "./../models/User";
 
 export const findOneUser = async (query: any) => {
   const user = await User.findOne({ ...query });
+
   return user;
 };
 
 export const createUser = async (data: CreateUserDTO) => {
   let user = new User(data);
+
   const verificationToken = user.getEmailVerificationToken();
+
   user = await user.save({ validateBeforeSave: false });
+  
   return { user, verificationToken };
 };
 

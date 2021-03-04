@@ -7,12 +7,9 @@ export const findProducts = async (
   page: number
 ) => {
   const count = await Product.countDocuments({ ...searchQuery });
-  const products = await Product.find({...searchQuery })
-    .populate("user", {
-      firstname: 1,
-      lastname: 1,
-      email: 1,
-    })
+
+  const products = await Product.find({ ...searchQuery })
+    .populate({ path: "user", select: "firstname lastname email" })
     .limit(pageSize)
     .skip(pageSize * (page - 1));
 
@@ -21,27 +18,33 @@ export const findProducts = async (
 
 export const createProduct = async (data: CreateProductDTO) => {
   let product = new Product(data);
+
   product = await product.save();
+
   return product;
 };
 
 export const findOneProduct = async (productId: string) => {
   const product = await Product.findById(productId);
+
   return product;
 };
 
 export const findTopProducts = async () => {
   const products = await Product.find({}).sort({ ratings: -1 }).limit(3);
+
   return products;
 };
 
 export const findRelatedProducts = async (productId: string) => {
   const product = await Product.findById(productId);
+
   if (product) {
     const products = await Product.find({
       _id: { $ne: product?._id },
       category: product?.category,
     });
+
     return products;
   }
 };
@@ -56,9 +59,11 @@ export const updateProduct = async (
   data: CreateProductDTO
 ) => {
   const product = await Product.findById(productId);
+
   if (!product) {
     return product;
   }
+
   const {
     name,
     description,
@@ -69,6 +74,7 @@ export const updateProduct = async (
     numReviews,
     price,
   } = data;
+
   product.name = name;
   product.description = description;
   product.brand = brand;
@@ -84,9 +90,12 @@ export const updateProduct = async (
 
 export const removeProduct = async (productId: string) => {
   const product = await Product.findById(productId);
+
   if (!product) {
     return product;
   }
+
   const deletedProduct = await product?.remove();
+
   return deletedProduct;
 };
