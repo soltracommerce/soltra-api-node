@@ -1,6 +1,8 @@
 import { NextFunction } from "express";
 import ErrorResponse from "../exceptions/httpException";
-import { ICart } from "./../models/Cart";
+import {
+  CreateCartDTO,
+} from "./../repositories/dto/cart.dto";
 import { ICartItem } from "./../models/CartItem";
 import {
   createCartDB,
@@ -11,7 +13,7 @@ import {
 } from "./../repositories/carts";
 
 class CartService {
-  static async createCart(data: ICart, next: NextFunction) {
+  static async createCart(data: CreateCartDTO, next: NextFunction) {
     const { user } = data;
 
     const cartByUser = await findOneCart({ user });
@@ -32,7 +34,7 @@ class CartService {
   }
 
   static async AddCartItem(
-    data: ICartItem | any,
+    data: ICartItem,
     cartId: string,
     next: NextFunction
   ) {
@@ -41,7 +43,7 @@ class CartService {
     if (!cart) {
       return next(new ErrorResponse(400, "Cart not found"));
     }
-    
+
     if (cart.user._id.toString() !== data.user) {
       return next(
         new ErrorResponse(401, "Not Authorized to access this cart!!!")
@@ -64,10 +66,9 @@ class CartService {
   static async updateCartItem(
     cartId: string,
     cartItemId: string,
-    data: { quantity: number; amount: number, user:string },
+    data: { quantity: number; amount: number; user: string },
     next: NextFunction
   ) {
-
     const cartByUser = await findOneCart({ _id: cartId });
 
     if (!cartByUser) {

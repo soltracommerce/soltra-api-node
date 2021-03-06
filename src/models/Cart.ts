@@ -1,18 +1,12 @@
 import { Schema, model, Document } from "mongoose";
 import cartItemSchema from "./CartItem";
 import { IUser } from './User';
-import { IProduct } from './Product';
+import { ICartItem } from './CartItem';
 
 export interface ICart extends Document {
   cart_total: number;
-  user: IUser
-  cartItems: {
-    _id: Schema.Types.ObjectId;
-    quantity: number;
-    amount: number;
-    status: string;
-    product: IProduct;
-  }[];
+  user: IUser;
+  cartItems:ICartItem[]
 }
 
 const cartSchema = new Schema({

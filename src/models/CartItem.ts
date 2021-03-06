@@ -1,9 +1,10 @@
 import { Schema, Document } from "mongoose";
 import { IProduct } from "./Product";
-import products from "./../data/products";
+import { IUser } from './User';
 
 export interface ICartItem extends Document {
   _id: Schema.Types.ObjectId;
+  user: IUser
   quantity: number;
   amount: number;
   status: string;
