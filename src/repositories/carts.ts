@@ -1,6 +1,8 @@
 import Cart from "../models/Cart";
 import { ICart } from "./../models/Cart";
+import { CreateCartDTO } from './../repositories/dto/cart.dto';
 import { ICartItem } from "./../models/CartItem";
+import { CreateCartItemDTO } from './dto/cart.dto';
 
 export const findOneCart = async (query: any) => {
   const cartByUser = await Cart.findOne({ ...query })
@@ -13,7 +15,7 @@ export const findOneCart = async (query: any) => {
 
   return cartByUser;
 };
-export const createCartDB = async (data: ICart) => {
+export const createCartDB = async (data: CreateCartDTO) => {
   let cart = new Cart(data);
 
   cart = await cart.save();

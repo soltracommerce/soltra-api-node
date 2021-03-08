@@ -42,3 +42,13 @@ export const validateShopRules = () => {
   ];
 };
 
+export const validateAddressRules = () => {
+  return [
+    check("address", "address is required").not().isEmpty(),
+    check("city", "City is required").not().isEmpty(),
+    check("phoneNumbers", "phone number is required").not().isEmpty(),
+    check("zipcode", "zipcode is required").not().isEmpty(),
+    check("state", "City is required").not().isEmpty(),
+    check("country", "country is required").not().isEmpty(),
+  ];
+};
