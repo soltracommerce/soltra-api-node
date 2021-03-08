@@ -4,6 +4,9 @@ import colors from "colors/safe";
 
 const connectDB = async () => {
   let MONGO_URI;
+  if (process.env.NODE_ENV === "production"){
+    MONGO_URI = process.env.MONGO_URI_PROD
+  }
   if (process.env.NODE_ENV === "development") {
     MONGO_URI = process.env.MONGO_URI_DEV;
   }
