@@ -8,6 +8,7 @@ export const listAllProducts = async (
   next: NextFunction
 ) => {
   const { search, category, pageNumber } = req.query;
+
   const { products, page, pages } = await ProductService.getProducts(
     search as string,
     category as string,
@@ -24,7 +25,9 @@ export const createProduct = async (
 ) => {
   req.body.user = req.user._id;
   req.body.image = req.file.path;
+
   const product = await ProductService.createProduct(req.body);
+
   res.status(201).send(product);
 };
 
@@ -34,13 +37,13 @@ export const getProduct = async (
   next: NextFunction
 ) => {
   const { productId } = req.params;
-  const product = await ProductService.getProductByID(productId);
-  if (!product) {
-    return next(
-      new ErrorResponse(400, "Product with the given ID does not exist")
-    );
+
+  const product = await ProductService.getProductByID(productId, next);
+  
+  if(product) {
+    res.status(200).send(product);
   }
-  res.status(200).send(product);
+  
 };
 
 export const listLatestProducts = async (
@@ -49,6 +52,7 @@ export const listLatestProducts = async (
   next: NextFunction
 ) => {
   const products = await ProductService.getLatestProducts();
+
   res.status(200).send(products);
 };
 
@@ -58,6 +62,7 @@ export const listTopProducts = async (
   next: NextFunction
 ) => {
   const products = await ProductService.getTopProducts();
+
   res.status(200).send(products);
 };
 
@@ -67,36 +72,40 @@ export const listRelatedProducts = async (
   next: NextFunction
 ) => {
   const { productId } = req.params;
-  const products = await ProductService.getRelatedProducts(productId);
+
+  const products = await ProductService.getRelatedProducts(productId, next);
+
   res.status(200).send(products);
 };
 
 export const updateProduct = async (
-  req: Request,
+  req: Request | any,
   res: Response,
   next: NextFunction
 ) => {
   const { productId } = req.params;
-  const product = await ProductService.update(productId, req.body);
-  if (!product) {
-    return next(
-      new ErrorResponse(400, "Product with the given ID does not exist")
-    );
+
+  req.body.user = req.user.id;
+  
+  const product = await ProductService.updateProduct(productId, req.body, next);
+  
+  if (product) {
+    res.status(200).send(product);
   }
-  res.status(200).send(product);
+  
 };
 
 export const deleteProduct = async (
-  req: Request,
+  req: Request | any,
   res: Response,
   next: NextFunction
 ) => {
   const { productId } = req.params;
-  const product = await ProductService.deleteProduct(productId);
-  if (!product) {
-    return next(
-      new ErrorResponse(400, "Product with the given ID does not exist")
-    );
+
+  const product = await ProductService.deleteProduct(productId, req.user.id, next);
+
+  if (product) {
+    res.status(200).send(product);
   }
-  res.status(200).send(product);
+  
 };

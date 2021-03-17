@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import OrderService from "./../services/orderService";
+import OrderService from "../services/orderServices";
 
 export const createOrder = async (
   req: Request | any,
@@ -23,12 +23,12 @@ export const getOrders = async (
   res.status(200).send(orders);
 };
 
-export const getUserOrder = async (
+export const getUserOrders = async (
   req: Request | any,
   res: Response,
   next: NextFunction
 ) => {
-  const order = await OrderService.getMyOrder(req.user.id, next);
+  const order = await OrderService.getMyOrders(req.user.id, next);
 
   if (order) {
     res.status(200).send(order);
@@ -49,14 +49,28 @@ export const getSingleOrder = async (
   }
 };
 
-export const updateOrder = async (
+export const updateOrderToPaid = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   const { orderId } = req.params;
 
-  const updatedOrder = await OrderService.updateOrder(req.body, orderId, next);
+  const updatedOrder = await OrderService.updateToPaid(req.body, orderId, next);
+
+  if (updatedOrder) {
+    res.status(200).send(updatedOrder);
+  }
+};
+
+export const updateOrderToDelivered = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { orderId } = req.params;
+
+  const updatedOrder = await OrderService.updateToDelivered(orderId, next);
 
   if (updatedOrder) {
     res.status(200).send(updatedOrder);
@@ -64,13 +78,14 @@ export const updateOrder = async (
 };
 
 export const deleteOrder = async (
-  req: Request,
+  req: Request | any,
   res: Response,
   next: NextFunction
 ) => {
   const { orderId } = req.params;
 
-  const deletedOrder = await OrderService.deleteOrder(orderId, next);
+
+  const deletedOrder = await OrderService.deleteOrder(orderId, req.user.id, next);
 
   if (deletedOrder) {
     res.status(200).send(deletedOrder);

@@ -12,7 +12,10 @@ import {
   deleteProduct,
 } from "../controllers/products";
 import authMiddleware from "../middlewares/auth";
+import adminMiddleware from './../middlewares/admin';
+import {validateProductId} from "./../middlewares/validateObjectId"
 import parser from "../utils/cloudinary";
+
 
 const router = express.Router();
 
@@ -20,6 +23,7 @@ router
   .route("/")
   .post(
     authMiddleware,
+    adminMiddleware,
     parser.single("image"),
     validateProductRules(),
     validate,
@@ -28,13 +32,13 @@ router
   .get(listAllProducts);
 
 router.route("/top").get(listTopProducts);
-router.route("/related/:productId").get(listRelatedProducts);
-router.route("latest/:productId").get(listLatestProducts);
+router.route("/related/:productId").get(validateProductId, listRelatedProducts);
+router.route("/latest").get(listLatestProducts);
 
 router
   .route("/:productId")
-  .get(getProduct)
-  .put(validateProductRules(), validate, updateProduct)
-  .delete(deleteProduct);
+  .get(validateProductId, getProduct)
+  .put(authMiddleware, adminMiddleware, validateProductRules(), validate, validateProductId, updateProduct)
+  .delete(authMiddleware, adminMiddleware, validateProductId, deleteProduct);
 
 export default router;

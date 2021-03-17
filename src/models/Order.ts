@@ -1,9 +1,10 @@
 import { Schema, model, Document } from "mongoose";
 import cartItemSchema from "./CartItem";
 import { ICartItem } from "./CartItem";
+import { IUser } from './User';
 
 export interface IOrder extends Document {
-  user: string;
+  user: IUser | any;
   orderItems: ICartItem[];
   deliveryAddress: string;
   itemsPrice: number;
@@ -17,8 +18,9 @@ export interface IOrder extends Document {
   paymentMethod: string,
   deliveryMethod: string,
   paymentResult: {
-    id: string,
+    id: number,
     status: string
+    reference: string;
   }
 }
 
@@ -36,11 +38,14 @@ const orderSchema = new Schema(
   
     paymentResult: {
       id: {
-        type: String,
+        type: Number,
       },
       status: {
         type: String,
       },
+      reference: {
+        type: String
+      }
     },
     deliveryAddress: {
       type: Schema.Types.ObjectId,

@@ -1,10 +1,8 @@
 import Cart from "../models/Cart";
 import { ICart } from "./../models/Cart";
-import { CreateCartDTO } from './../repositories/dto/cart.dto';
-import { ICartItem } from "./../models/CartItem";
-import { CreateCartItemDTO } from './dto/cart.dto';
+import { CreateCartDTO } from "../dto/cart.dto";
 
-export const findOneCart = async (query: any) => {
+export const findOneCart = async (query: any): Promise<ICart | null> => {
   const cartByUser = await Cart.findOne({ ...query })
 
     .populate({ path: "user", select: "firstname lastname email" })
@@ -15,7 +13,16 @@ export const findOneCart = async (query: any) => {
 
   return cartByUser;
 };
-export const createCartDB = async (data: CreateCartDTO) => {
+
+export const findAllCartsDB = async (): Promise<ICart[]> => {
+  const carts = await Cart.find()
+    .populate("user", "firstname lastname email")
+    .populate("cartItems.product", "name image price");
+
+  return carts;
+};
+
+export const createCartDB = async (data: CreateCartDTO): Promise<ICart> => {
   let cart = new Cart(data);
 
   cart = await cart.save();
@@ -23,56 +30,7 @@ export const createCartDB = async (data: CreateCartDTO) => {
   return cart;
 };
 
-export const AddCartItemDB = async (data: ICartItem, cart: ICart) => {
-  cart?.cartItems.unshift(data);
-
-  const new_cart_total = cart.cartItems
-    .map((cartItem) => cartItem.amount)
-    .reduce((a, b) => a + b, 0);
-
-  cart.cart_total = new_cart_total;
-
-  const newCart = await cart?.save();
-
-  return newCart;
-};
-
-export const updateCartItemDB = async (
-  cart: ICart,
-  cartItemId: string,
-  data: { quantity: number; amount: number }
-) => {
-  const cartItemIndex = cart.cartItems
-    .map((cartItem) => cartItem._id.toString())
-    .indexOf(cartItemId);
-
-  cart.cartItems[cartItemIndex].quantity = data.quantity;
-  cart.cartItems[cartItemIndex].amount = data.amount;
-
-  const new_cart_total = cart.cartItems
-    .map((cartItem) => cartItem.amount)
-    .reduce((a, b) => a + b, 0);
-
-  cart.cart_total = new_cart_total;
-
-  const newCart = await cart.save();
-
-  return newCart;
-};
-
-export const removeCartItemDB = async (cart: ICart, cartItemId: string) => {
-  const cartItemIndex = cart.cartItems
-    .map((cartItem) => cartItem._id.toString())
-    .indexOf(cartItemId);
-
-  cart.cartItems.splice(cartItemIndex, 1);
-
-  const new_cart_total = cart.cartItems
-    .map((cartItem) => cartItem.amount)
-    .reduce((a, b) => a + b, 0);
-
-  cart.cart_total = new_cart_total;
-
+export const updateCartDB = async (cart: ICart): Promise<ICart> => {
   const newCart = await cart.save();
 
   return newCart;

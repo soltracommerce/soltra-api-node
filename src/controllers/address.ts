@@ -13,24 +13,48 @@ export const addAddress = async (
   res.status(201).send(address);
 };
 
-export const getAllAddress = async (
+export const getMyAddresses = async (
   req: Request | any,
   res: Response,
   next: NextFunction
 ) => {
-  const addresses = await AddressService.getAllAddress(req.user.id);
+  const addresses = await AddressService.getAddressesByUser(req.user.id);
 
   res.status(200).send(addresses);
 };
 
-export const getSingleAddress = async (
+export const getAllAddresses = async (
+  req: Request | any,
+  res: Response,
+  next: NextFunction
+) => {
+  const addresses = await AddressService.getAddresses();
+
+  res.status(200).send(addresses);
+};
+
+export const getAddress = async (
   req: Request | any,
   res: Response,
   next: NextFunction
 ) => {
   const { addressId } = req.params;
 
-  const address = await AddressService.getAddressByID(
+  const address = await AddressService.getAddressByID(addressId, next);
+
+  if (address) {
+    res.status(200).send(address);
+  }
+};
+
+export const getAddressByUser = async (
+  req: Request | any,
+  res: Response,
+  next: NextFunction
+) => {
+  const { addressId } = req.params;
+
+  const address = await AddressService.getUserAddress(
     addressId,
     req.user.id,
     next
@@ -40,6 +64,8 @@ export const getSingleAddress = async (
     res.status(200).send(address);
   }
 };
+
+
 
 export const updateAddress = async (
   req: Request | any,
@@ -55,7 +81,7 @@ export const updateAddress = async (
     req.body,
     next
   );
-
+  
   if (updatedAddress) {
     res.status(200).send(updatedAddress);
   }
@@ -68,9 +94,13 @@ export const deleteAddress = async (
 ) => {
   const { addressId } = req.params;
 
-  const deletedAddress = await AddressService.deleteAddress(addressId, req.user.id, next);
+  const deletedAddress = await AddressService.deleteAddress(
+    addressId,
+    req.user.id,
+    next
+  );
 
-  if(deletedAddress) {
-      res.status(200).send(deletedAddress);
+  if (deletedAddress) {
+    res.status(200).send(deletedAddress);
   }
 };

@@ -1,8 +1,8 @@
 import { Response } from "express";
-import { UserBaseDocument } from "../models/User";
+import { IUser } from "../models/User";
 
 const sendResponseToken = (
-  user: UserBaseDocument,
+  user: IUser,
   statusCode: number,
   res: Response
 ) => {

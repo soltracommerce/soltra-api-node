@@ -14,6 +14,7 @@ connectDB();
 // routes
 routes(app);
 
+
 // Unhandled Exceptions
 process.on("uncaughtException", (ex: Error) => {
   logger.error(ex.message, ex);
