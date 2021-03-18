@@ -22,3 +22,10 @@ export class CreateOrderDTO {
     status: string;
   };
 }
+
+export class updateOrderDTO {
+  payment_id: number;
+  payment_status: string;
+  payment_date: Date;
+  payment_reference: string;
+}

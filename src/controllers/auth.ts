@@ -1,7 +1,5 @@
 import AuthService from "./../services/authService";
 import { Request, Response, NextFunction } from "express";
-import logger from "./../startup/logger";
-import ErrorResponse from "./../exceptions/httpException";
 import sendResponseToken from "./../utils/sendTokenResponse";
 
 export const registerUser = async (
@@ -9,13 +7,12 @@ export const registerUser = async (
   res: Response,
   next: NextFunction
 ) => {
-  const info = await AuthService.SignUp(req, req.body, next);
+  const info = await AuthService.signUp(req, req.body, next);
 
   if (info) {
-    res
-      .status(200)
-      .send({ msg: "We just sent you an Email to verify your account" });
-    logger.info(info);
+    res.status(200).send({
+      msg: `We just sent an email to ${req.body.email} to verify your account`,
+    });
   }
 };
 
@@ -24,13 +21,11 @@ export const loginUser = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { user, isMatch } = await AuthService.SignIn(req.body);
+  const user = await AuthService.signIn(req.body, next);
 
-  if (!user || !isMatch) {
-    return next(new ErrorResponse(400, "Invalid Email or Password"));
+  if (user) {
+    sendResponseToken(user, 201, res);
   }
-
-  sendResponseToken(user, 201, res);
 };
 
 export const confirmEmail = async (
@@ -40,17 +35,13 @@ export const confirmEmail = async (
 ) => {
   const { token } = req.query;
 
-  if (!token) {
-    return next(new ErrorResponse(400, "There is no verification token"));
+  console.log(token)
+
+  const user = await AuthService.emailConfirmation(token, next);
+
+  if (user) {
+    sendResponseToken(user, 201, res);
   }
-
-  const user = await AuthService.EmailConfirmation(token as string);
-
-  if (!user) {
-    return next(new ErrorResponse(400, "Invalid Verification Token"));
-  }
-
-  sendResponseToken(user, 201, res);
 };
 
 export const forgotPassword = async (
@@ -58,14 +49,12 @@ export const forgotPassword = async (
   res: Response,
   next: NextFunction
 ) => {
-  const info = await AuthService.ForgotPassword(req, req.body, next);
+  const info = await AuthService.forgotPassword(req, req.body, next);
 
   if (info) {
-    res
-      .status(200)
-      .send({
-        msg: `Email to reset your password has been sent to ${req.body.email}`,
-      });
+    res.status(200).send({
+      msg: `Email to reset your password has been sent to ${req.body.email}`,
+    });
   }
 };
 
@@ -77,13 +66,13 @@ export const resetPassword = async (
   const { resettoken } = req.params;
   const { password } = req.body;
 
-  const user = await AuthService.ResetPassword(resettoken, password);
+  const user = await AuthService.resetPassword(resettoken, password, next);
 
-  if (!user) {
-    return next(new ErrorResponse(400, "Invalid Token"));
+  if(user) {
+    sendResponseToken(user, 200, res);
   }
 
-  sendResponseToken(user, 200, res);
+  
 };
 
 export const updatePassword = async (
@@ -93,14 +82,10 @@ export const updatePassword = async (
 ) => {
   const { newPassword, currentPassword } = req.body;
 
-  const { user, isMatch } = await AuthService.UpdatePassword(req, {
-    newPassword,
-    currentPassword,
-  });
+  const user = await AuthService.updatePassword(req, newPassword, currentPassword, next);
 
-  if (!isMatch) {
-    return next(new ErrorResponse(400, "Password is incorrect"));
+  if(user) {
+    sendResponseToken(user as any, 200, res);
   }
-
-  sendResponseToken(user as any, 200, res);
+ 
 };

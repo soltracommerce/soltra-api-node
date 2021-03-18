@@ -1,4 +1,5 @@
 import { check } from "express-validator";
+import { isString } from "lodash";
 
 export const validateUserRules = () => {
   return [
@@ -50,5 +51,18 @@ export const validateAddressRules = () => {
     check("zipcode", "zipcode is required").not().isEmpty(),
     check("state", "City is required").not().isEmpty(),
     check("country", "country is required").not().isEmpty(),
+  ];
+};
+
+export const validatePaymentRules = () => {
+  return [check("amount", "amount must be a number").isNumeric()];
+};
+
+export const validateOrderRules = () => {
+  return [
+    check("payment_id", "payment id must be a number").isNumeric().not().isEmpty(),
+    check("payment_status", "payment status is required").isString().not().isEmpty(),
+    check("payment_date", "payment date is required").not().isEmpty(),
+    check("payment_reference", "payment reference is required").isString().not().isEmpty()
   ];
 };

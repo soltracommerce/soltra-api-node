@@ -1,4 +1,5 @@
 import { Schema, model, Document } from "mongoose";
+import { IUser } from './User';
 
 export interface IProduct extends Document {
   name: string;
@@ -10,6 +11,7 @@ export interface IProduct extends Document {
   rating: number;
   numReviews: number;
   price: number;
+  user: IUser
 }
 
 const reviewSchema = new Schema(

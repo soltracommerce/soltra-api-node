@@ -14,14 +14,12 @@ export interface IUser extends Document {
   verifyEmailToken: string | undefined;
   resetPasswordToken: string | undefined;
   resetPasswordExpire: number | undefined;
-}
-
-export interface UserBaseDocument extends IUser {
   getEmailVerificationToken(): string;
   comparePasswords(password: string): boolean;
   getSignedJWT(): string;
   getResetPasswordToken(): string;
 }
+
 
 const userSchema = new Schema(
   {
@@ -118,4 +116,4 @@ userSchema.methods.getResetPasswordToken = function () {
   return resetToken;
 };
 
-export default model<UserBaseDocument>("User", userSchema);
+export default model<IUser>("User", userSchema);

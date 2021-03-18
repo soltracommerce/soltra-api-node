@@ -10,7 +10,3 @@ export class LoginUserDTO {
   readonly password: string;
 }
 
-export class UpdatePasswordDTO {
-  readonly newPassword: string;
-  readonly currentPassword: string;
-}

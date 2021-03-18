@@ -1,38 +1,24 @@
-import { _FilterQuery } from "mongoose";
-import User, { UserBaseDocument } from "../models/User";
-import { CreateUserDTO } from "./dto/auth.dto";
+import User from "../models/User";
+import { CreateUserDTO } from "../dto/auth.dto";
 import { IUser } from "./../models/User";
 
-export const findOneUser = async (query: any) => {
+export const findOneUser = async (query: any): Promise<IUser | null> => {
   const user = await User.findOne({ ...query });
 
   return user;
 };
 
-export const createUser = async (data: CreateUserDTO) => {
+export const createUserDB = async (data: CreateUserDTO): Promise<IUser> => {
   let user = new User(data);
 
-  const verificationToken = user.getEmailVerificationToken();
-
-  user = await user.save({ validateBeforeSave: false });
+  user = await user.save();
   
-  return { user, verificationToken };
+  return user;
 };
 
-export const ConfirmUser = async (user: IUser | any) => {
-  user.verifyEmailExpire = undefined;
-  user.isEmailVerified = true;
+export const updateUserDB = async (user: IUser): Promise<IUser> => {
+  const newUser = await user.save({ validateBeforeSave: false });
 
-  await user.save({ validateBeforeSave: false });
-};
+  return newUser
+}
 
-export const resetUserPassword = async (
-  user: IUser | any,
-  password: string
-) => {
-  user.password = password;
-  user.resetPasswordToken = undefined;
-  user.resetPasswordExpire = undefined;
-
-  await user.save({ validateBeforeSave: false });
-};
