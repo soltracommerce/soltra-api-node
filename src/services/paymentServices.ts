@@ -1,21 +1,20 @@
-import { CreateInitialTransactionDTO } from "../dto/payment.dto";
+// import { CreateInitialTransactionDTO } from "../dto/payment.dto";
 import Paystack from "../apis/paystack";
 import { createReceipt, findOneReceipt } from "../repositories/payment";
 import { IPayment } from "./../models/Payment";
 import { findOneUser } from "./../repositories/auth";
 import ErrorResponse from "./../exceptions/httpException";
-import { NextFunction } from "express";
-import { getUserReceipts } from './../repositories/payment';
+import { getUserReceipts } from "./../repositories/payment";
 
 class PaymentService {
-  static async initialPayment(
-    data: { amount: number; user: string },
-    next: NextFunction
-  ): Promise<any> {
+  static async initialPayment(data: {
+    amount: number;
+    user: string;
+  }): Promise<any> {
     const user = await findOneUser({ _id: data.user });
 
     if (!user) {
-      return next(new ErrorResponse(404, "User does not exist"));
+      throw new ErrorResponse(404, "User does not exist");
     }
 
     const newData = {
@@ -31,7 +30,7 @@ class PaymentService {
     return response.data;
   }
 
-  static async verifyPayment(reference: string): Promise <IPayment> {
+  static async verifyPayment(reference: string): Promise<IPayment> {
     const { data } = await Paystack.verifyPaymentAPI(reference);
 
     const payment = {
@@ -50,11 +49,11 @@ class PaymentService {
     return receipt;
   }
 
-  static async getPaymentsByUser(userId: string, next: NextFunction): Promise<void | IPayment[]> {
+  static async getPaymentsByUser(userId: string): Promise<void | IPayment[]> {
     const user = await findOneUser({ _id: userId });
 
-    if(!user) {
-      return next(new ErrorResponse(404, "User does not exist"))
+    if (!user) {
+      throw new ErrorResponse(404, "User does not exist");
     }
 
     const receipts = await getUserReceipts(user.email);
@@ -62,13 +61,11 @@ class PaymentService {
     return receipts;
   }
 
-  static async getAPayment(paymentId: string, next: NextFunction): Promise<void | IPayment> {
+  static async getAPayment(paymentId: string): Promise<void | IPayment> {
     const receipt = await findOneReceipt({ _id: paymentId });
 
     if (!receipt) {
-      return next(
-        new ErrorResponse(404, "Receipt not found")
-      );
+      throw new ErrorResponse(404, "Receipt not found");
     }
 
     return receipt;

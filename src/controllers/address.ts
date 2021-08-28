@@ -40,7 +40,7 @@ export const getAddress = async (
 ) => {
   const { addressId } = req.params;
 
-  const address = await AddressService.getAddressByID(addressId, next);
+  const address = await AddressService.getAddressByID(addressId);
 
   if (address) {
     res.status(200).send(address);
@@ -54,18 +54,12 @@ export const getAddressByUser = async (
 ) => {
   const { addressId } = req.params;
 
-  const address = await AddressService.getUserAddress(
-    addressId,
-    req.user.id,
-    next
-  );
+  const address = await AddressService.getUserAddress(addressId, req.user.id);
 
   if (address) {
     res.status(200).send(address);
   }
 };
-
-
 
 export const updateAddress = async (
   req: Request | any,
@@ -78,10 +72,9 @@ export const updateAddress = async (
 
   const updatedAddress = await AddressService.updateAddress(
     addressId,
-    req.body,
-    next
+    req.body
   );
-  
+
   if (updatedAddress) {
     res.status(200).send(updatedAddress);
   }
@@ -96,11 +89,10 @@ export const deleteAddress = async (
 
   const deletedAddress = await AddressService.deleteAddress(
     addressId,
-    req.user.id,
-    next
+    req.user.id
   );
 
   if (deletedAddress) {
-    res.status(200).send(deletedAddress);
+    res.status(204).send(deletedAddress);
   }
 };

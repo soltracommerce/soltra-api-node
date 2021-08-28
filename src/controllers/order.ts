@@ -8,7 +8,7 @@ export const createOrder = async (
 ) => {
   req.body.user = req.user.id;
 
-  const order = await OrderService.createOrder(req.body, next);
+  const order = await OrderService.createOrder(req.body);
 
   res.status(201).send(order);
 };
@@ -28,7 +28,7 @@ export const getUserOrders = async (
   res: Response,
   next: NextFunction
 ) => {
-  const order = await OrderService.getMyOrders(req.user.id, next);
+  const order = await OrderService.getMyOrders(req.user.id);
 
   if (order) {
     res.status(200).send(order);
@@ -42,7 +42,7 @@ export const getSingleOrder = async (
 ) => {
   const { orderId } = req.params;
 
-  const order = await OrderService.getOrderByID(orderId, next);
+  const order = await OrderService.getOrderByID(orderId);
 
   if (order) {
     res.status(200).send(order);
@@ -56,7 +56,7 @@ export const updateOrderToPaid = async (
 ) => {
   const { orderId } = req.params;
 
-  const updatedOrder = await OrderService.updateToPaid(req.body, orderId, next);
+  const updatedOrder = await OrderService.updateToPaid(req.body, orderId);
 
   if (updatedOrder) {
     res.status(200).send(updatedOrder);
@@ -70,7 +70,7 @@ export const updateOrderToDelivered = async (
 ) => {
   const { orderId } = req.params;
 
-  const updatedOrder = await OrderService.updateToDelivered(orderId, next);
+  const updatedOrder = await OrderService.updateToDelivered(orderId);
 
   if (updatedOrder) {
     res.status(200).send(updatedOrder);
@@ -84,8 +84,7 @@ export const deleteOrder = async (
 ) => {
   const { orderId } = req.params;
 
-
-  const deletedOrder = await OrderService.deleteOrder(orderId, req.user.id, next);
+  const deletedOrder = await OrderService.deleteOrder(orderId, req.user.id);
 
   if (deletedOrder) {
     res.status(200).send(deletedOrder);

@@ -9,7 +9,7 @@ export const createCart = async (
 ) => {
   req.body.user = req.user.id;
 
-  const cart = await CartService.createCart(req.body, next);
+  const cart = await CartService.createCart(req.body);
 
   res.status(201).send(cart);
 };
@@ -31,7 +31,7 @@ export const getCart = async (
 ) => {
   const { cartId } = req.params;
 
-  const cart = await CartService.getCartByID(cartId, next);
+  const cart = await CartService.getCartByID(cartId);
 
   if (cart) {
     res.status(200).send(cart);
@@ -43,7 +43,7 @@ export const getUserCart = async (
   res: Response,
   next: NextFunction
 ) => {
-  const cart = await CartService.getUserCart(req.user.id, next);
+  const cart = await CartService.getUserCart(req.user.id);
 
   if (cart) {
     res.status(200).send(cart);
@@ -61,7 +61,7 @@ export const addToCart = async (
 
   req.body.product = productId;
 
-  const cart = await CartService.AddCartItem(req.body, cartId, next);
+  const cart = await CartService.AddCartItem(req.body, cartId);
 
   if (cart) {
     res.status(200).send(cart);
@@ -77,12 +77,7 @@ export const updateCartItem = async (
 
   req.body.user = req.user.id;
 
-  const cart = await CartService.updateCartItem(
-    cartId,
-    cartItemId,
-    req.body,
-    next
-  );
+  const cart = await CartService.updateCartItem(cartId, cartItemId, req.body);
 
   if (cart) {
     res.status(200).send(cart);
@@ -101,8 +96,7 @@ export const removeCartItem = async (
   const deletedCartItem = await CartService.removeCartItem(
     cartId,
     cartItemId,
-    user,
-    next
+    user
   );
 
   if (deletedCartItem) {

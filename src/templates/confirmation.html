@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Email</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sofia&effect=shadow-multiple">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+    <style type="text/css">
+      @media only screen and (max-width: 600px) {
+            #emailContainer {
+              margin: 10px !important;
+              width: 320px !important;
+            }
+          }
+    </style>
+  </head>
+  <body style='margin:0;padding:0;font-family:"Open Sans" sans-serif;font-size:1rem;'>
+    <table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" id="bodyTable">
+      <tr>
+        <td align="center" valign="top">
+          <table border="0" cellpadding="0" cellspacing="0" id="emailContainer" style="width:100%;max-width:600px;background-color: #fafafa; padding:32px;">
+            <!-- Header -->
+            <tr>
+              <td align="center" valign="top">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" id="emailHeader">
+                  <tr>
+                    <td align="center" valign="top">
+                      <h1>
+                        <h1 class="logo font-effect-shadow-multiple" style='font-size:2rem;font-weight:bold;color:olive;text-align:center;font-family:"Sofia", sans-serif;'>
+                          SOL<span style="color: rgb(245, 161, 4)">TRA</span>
+                        </h1>
+                      </h1>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <!-- Content -->
+            <tr>
+              <td align="center" valign="top">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" id="emailBody">
+                  <tr>
+                    <td valign="top">
+                      <h3 style="color: #5c5b5b">Hello {{username}},</h3>
+                      <p style="
+                          margin: 2rem 0;
+                          letter-spacing: 1px;
+                          word-spacing: 2px;
+                        ">
+                        You are receiving this email because you need to confirm
+                        your email address. Please verify your account by
+                        clicking the button below.
+                      </p>
+                      <a href="http://localhost:5000/api/v1/auth/confirmemail?token=123456789" target="_blank" style="
+                          cursor: pointer;
+                          border-radius: 5px;
+                          color: white;
+                          text-decoration: none;
+                          padding: 8px;
+                          background-color: #287746;
+                          font-weight: 500;
+                        ">Confirm Email</a>
+                      <p style="
+                          margin-top: 2rem;
+                          letter-spacing: 1px;
+                          word-spacing: 2px;
+                        ">
+                        or copy and paste the following link in your browser:
+                      </p>
+                      <span>{{verifyEmailUrl}}</span>
+                      <p style="
+                          margin-top: 2rem;
+                          letter-spacing: 1px;
+                          word-spacing: 2px;
+                        ">
+                        if you did not create an account using this address
+                        please send a mail to support@qualwear.com
+                      </p>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

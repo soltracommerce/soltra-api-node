@@ -8,6 +8,7 @@ import connectDB from "./startup/db";
 
 const app: Application = express();
 
+
 // Connect to database
 connectDB();
 

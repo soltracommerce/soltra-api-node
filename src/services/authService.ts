@@ -9,19 +9,19 @@ import {
 } from "./../repositories/auth";
 import ErrorResponse from "./../exceptions/httpException";
 import sendEmail from "../utils/sendEmail";
+import MailService from "./../utils/emailServices";
 
 class AuthService {
   static async signUp(
     req: Request,
     data: CreateUserDTO,
-    next: NextFunction
   ): Promise<any> {
     const { email } = data;
 
     const userData = await findOneUser({ email });
 
     if (userData) {
-      return next(new ErrorResponse(400, "User with the email already exists"));
+      throw new ErrorResponse(400, "User with the email already exists");
     }
 
     const user = await createUserDB(data);
@@ -32,43 +32,34 @@ class AuthService {
       "host"
     )}/api/v1/auth/confirmemail?token=${verificationToken}`;
 
-    const message = `Hello ${user.firstname},\n\nYou are receiving this email because you need to confirm your
-    \nemail address. Please verify your account by clicking the link below\n\n${verifyEmailUrl}`;
-
     await updateUserDB(user);
-    try {
-      const info = await sendEmail({
-        email: user.email,
-        subject: "Email confirmation token",
-        message,
-      });
-      return info;
-    } catch (error) {
-      return next(
-        new ErrorResponse(
-          400,
-          "Sorry!!! we could not send an Email to verify your account"
-        )
-      );
-    }
+
+    //send email
+
+    const response = await MailService.sendMail(
+      {
+        name: "confirmation.html",
+        data: { username: user.firstname, verifyEmailUrl },
+      },
+      { email: user.email, subject: "Account Verification" }
+    );
+
+    return response;
   }
 
-  static async signIn(
-    data: LoginUserDTO,
-    next: NextFunction
-  ): Promise<void | IUser> {
+  static async signIn(data: LoginUserDTO): Promise<void | IUser> {
     const { email } = data;
 
     const user = await findOneUser({ email });
 
     if (!user) {
-      return next(new ErrorResponse(400, "Invalid Email or Password"));
+      throw new ErrorResponse(400, "Invalid Email or Password");
     }
 
     const isMatch = await user.comparePasswords(data.password);
 
     if (!isMatch) {
-      return next(new ErrorResponse(400, "Invalid Email or Password"));
+      throw new ErrorResponse(400, "Invalid Email or Password");
     }
 
     return user;
@@ -76,13 +67,11 @@ class AuthService {
 
   static async emailConfirmation(
     token: string | any,
-    next: NextFunction
   ): Promise<void | IUser> {
     if (!token) {
-      return next(new ErrorResponse(400, "There is no verification token"));
+      throw new ErrorResponse(400, "There is no verification token");
     }
 
-    console.log(typeof token);
     const splitToken = token.split(".")[0];
 
     const verifyEmailToken = crypto
@@ -96,7 +85,7 @@ class AuthService {
     });
 
     if (!user) {
-      return next(new ErrorResponse(400, "Invalid Verification Token"));
+      throw new ErrorResponse(400, "Invalid Verification Token");
     }
 
     user.verifyEmailExpire = undefined;
@@ -111,14 +100,13 @@ class AuthService {
   static async forgotPassword(
     req: Request,
     data: any,
-    next: NextFunction
   ): Promise<any> {
     const { email } = data;
 
     const user = await findOneUser({ email });
 
     if (!user) {
-      return next(new ErrorResponse(404, "User does not exist"));
+      throw new ErrorResponse(404, "User does not exist");
     }
 
     const resetToken = user.getResetPasswordToken();
@@ -144,14 +132,13 @@ class AuthService {
       user.resetPasswordExpire = undefined;
 
       await updateUserDB(user);
-      return next(new ErrorResponse(400, "Sorry! Email Could not be sent"));
+      throw new ErrorResponse(400, "Sorry! Email Could not be sent");
     }
   }
 
   static async resetPassword(
     token: string,
     password: string,
-    next: NextFunction
   ): Promise<void | IUser> {
     const resetPasswordToken = crypto
       .createHash("sha256")
@@ -164,7 +151,7 @@ class AuthService {
     });
 
     if (!user) {
-      return next(new ErrorResponse(400, "Invalid Token"));
+      throw new ErrorResponse(400, "Invalid Token");
     }
 
     user.password = password;
@@ -180,18 +167,17 @@ class AuthService {
     req: Request | any,
     newPassword: string,
     currentPassword: string,
-    next: NextFunction
   ): Promise<void | IUser> {
     const user = await findOneUser({ _id: req.user.id });
 
     if (!user) {
-      return next(new ErrorResponse(400, "User does not exist"));
+      throw new ErrorResponse(400, "User does not exist");
     }
 
     const isMatch = await user.comparePasswords(currentPassword);
 
     if (!isMatch) {
-      return next(new ErrorResponse(400, "Password is incorrect"));
+      throw new ErrorResponse(400, "Password is incorrect");
     }
 
     user.password = newPassword;

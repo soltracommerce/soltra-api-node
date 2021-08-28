@@ -1,7 +1,6 @@
 import { IAddress } from "../models/Address";
 import ErrorResponse from "./../exceptions/httpException";
 import { CreateAddressDTO } from "../dto/address.dto";
-import { NextFunction } from "express";
 import {
   addAddressDB,
   findOneAddress,
@@ -32,26 +31,22 @@ class AddressService {
 
   static async getUserAddress(
     addressId: string,
-    userId: string,
-    next: NextFunction
+    userId: string
   ): Promise<void | IAddress> {
     const address = await findOneAddress({ _id: addressId, user: userId });
 
     if (!address) {
-      return next(new ErrorResponse(404, "Address not found"));
+      throw new ErrorResponse(404, "Address not found");
     }
 
     return address;
   }
 
-  static async getAddressByID(
-    addressId: string,
-    next: NextFunction
-  ): Promise<void | IAddress> {
+  static async getAddressByID(addressId: string): Promise<void | IAddress> {
     const address = await findOneAddress({ _id: addressId });
 
     if (!address) {
-      return next(new ErrorResponse(404, "Address not found"));
+      throw new ErrorResponse(404, "Address not found");
     }
 
     return address;
@@ -59,19 +54,16 @@ class AddressService {
 
   static async updateAddress(
     addressId: string,
-    data: CreateAddressDTO,
-    next: NextFunction
+    data: CreateAddressDTO
   ): Promise<void | IAddress> {
     const address = await findOneAddress({ _id: addressId });
 
     if (!address) {
-      return next(new ErrorResponse(404, "Address not found"));
+      throw new ErrorResponse(404, "Address not found");
     }
 
     if (address.user._id.toString() !== data.user) {
-      return next(
-        new ErrorResponse(401, "not authorized to update this address")
-      );
+      throw new ErrorResponse(401, "not authorized to update this address");
     }
 
     address.address = data.address;
@@ -90,19 +82,16 @@ class AddressService {
 
   static async deleteAddress(
     addressId: string,
-    userId: string,
-    next: NextFunction
+    userId: string
   ): Promise<void | IAddress> {
     const address = await findOneAddress({ _id: addressId });
 
     if (!address) {
-      return next(new ErrorResponse(404, "Address not found"));
+      throw new ErrorResponse(404, "Address not found");
     }
 
     if (address.user._id.toString() !== userId) {
-      return next(
-        new ErrorResponse(401, "not authorized to update this address")
-      );
+      throw new ErrorResponse(401, "not authorized to update this address");
     }
 
     const deletedAddress = await deleteAddressDB(address);

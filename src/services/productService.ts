@@ -1,6 +1,5 @@
 import { IProduct } from "../models/Product";
 import { CreateProductDTO } from "../dto/product.dto";
-import { NextFunction } from "express";
 import ErrorResponse from "./../exceptions/httpException";
 import {
   createProductDB,
@@ -39,14 +38,11 @@ class ProductService {
     return product;
   }
 
-  static async getProductByID(
-    productId: string,
-    next: NextFunction
-  ): Promise<void | IProduct> {
+  static async getProductByID(productId: string): Promise<void | IProduct> {
     const product = await findOneProduct(productId);
 
     if (!product) {
-      return next(new ErrorResponse(400, "Product not found"));
+      throw new ErrorResponse(400, "Product not found");
     }
 
     return product;
@@ -59,13 +55,12 @@ class ProductService {
   }
 
   static async getRelatedProducts(
-    productId: string,
-    next: NextFunction
+    productId: string
   ): Promise<void | IProduct[]> {
     const product = await findOneProduct(productId);
 
     if (!product) {
-      return next(new ErrorResponse(404, "Product not found"));
+      throw new ErrorResponse(404, "Product not found");
     }
 
     const products = await findRelatedProducts(product);
@@ -81,17 +76,19 @@ class ProductService {
 
   static async updateProduct(
     productId: string,
-    data: CreateProductDTO,
-    next: NextFunction
+    data: CreateProductDTO
   ): Promise<void | IProduct> {
     const product = await findOneProduct(productId);
 
     if (!product) {
-      return next(new ErrorResponse(400, "Product not found"));
+      throw new ErrorResponse(400, "Product not found");
     }
 
-    if(product.user._id.toString() !== data.user) {
-      return next(new ErrorResponse(401, "User not authorized to update this product"))
+    if (product.user._id.toString() !== data.user) {
+      throw new ErrorResponse(
+        401,
+        "User not authorized to update this product"
+      );
     }
 
     product.name = data.name;
@@ -108,15 +105,21 @@ class ProductService {
     return updatedProduct;
   }
 
-  static async deleteProduct(productId: string, userId:string, next: NextFunction): Promise<void | IProduct> {
+  static async deleteProduct(
+    productId: string,
+    userId: string
+  ): Promise<void | IProduct> {
     const product = await findOneProduct(productId);
 
     if (!product) {
-      return next(new ErrorResponse(400, "Product not found"));
+      throw new ErrorResponse(400, "Product not found");
     }
 
-    if(product.user._id.toString() !== userId) {
-      return next(new ErrorResponse(401, "User not authorized to delete this product"))
+    if (product.user._id.toString() !== userId) {
+      throw new ErrorResponse(
+        401,
+        "User not authorized to delete this product"
+      );
     }
 
     const deletedProduct = await removeProductDB(product);

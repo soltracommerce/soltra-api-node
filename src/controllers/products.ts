@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import ErrorResponse from "../exceptions/httpException";
 import ProductService from "./../services/productService";
 
 export const listAllProducts = async (
@@ -38,12 +37,11 @@ export const getProduct = async (
 ) => {
   const { productId } = req.params;
 
-  const product = await ProductService.getProductByID(productId, next);
-  
-  if(product) {
+  const product = await ProductService.getProductByID(productId);
+
+  if (product) {
     res.status(200).send(product);
   }
-  
 };
 
 export const listLatestProducts = async (
@@ -73,7 +71,7 @@ export const listRelatedProducts = async (
 ) => {
   const { productId } = req.params;
 
-  const products = await ProductService.getRelatedProducts(productId, next);
+  const products = await ProductService.getRelatedProducts(productId);
 
   res.status(200).send(products);
 };
@@ -86,13 +84,12 @@ export const updateProduct = async (
   const { productId } = req.params;
 
   req.body.user = req.user.id;
-  
-  const product = await ProductService.updateProduct(productId, req.body, next);
-  
+
+  const product = await ProductService.updateProduct(productId, req.body);
+
   if (product) {
     res.status(200).send(product);
   }
-  
 };
 
 export const deleteProduct = async (
@@ -102,10 +99,9 @@ export const deleteProduct = async (
 ) => {
   const { productId } = req.params;
 
-  const product = await ProductService.deleteProduct(productId, req.user.id, next);
+  const product = await ProductService.deleteProduct(productId, req.user.id);
 
   if (product) {
     res.status(200).send(product);
   }
-  
 };

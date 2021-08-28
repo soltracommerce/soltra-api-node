@@ -8,13 +8,13 @@ export const initialTransaction = async (
 ) => {
   req.body.amount *= 100;
 
-  req.body.user = req.user.id 
+  req.body.user = req.user.id;
 
-  const { data } = await PaymentService.initialPayment(req.body, next);
+  const { data } = await PaymentService.initialPayment(req.body);
 
   // res.redirect(data.authorization_url);
 
-res.status(200).send(data)
+  res.status(200).send(data);
 };
 
 export const verifyTransaction = async (
@@ -34,14 +34,12 @@ export const getUsersTransactions = async (
   res: Response,
   next: NextFunction
 ) => {
+  const receipts = await PaymentService.getPaymentsByUser(req.user.id);
 
-  const receipts = await PaymentService.getPaymentsByUser(req.user.id, next);
-
-  if(receipts){
-    res.status(200).send(receipts)
+  if (receipts) {
+    res.status(200).send(receipts);
   }
 };
-
 
 export const getATransaction = async (
   req: Request,
@@ -50,11 +48,9 @@ export const getATransaction = async (
 ) => {
   const { paymentId } = req.params;
 
-  const receipt = await PaymentService.getAPayment(paymentId, next);
+  const receipt = await PaymentService.getAPayment(paymentId);
 
-  if(receipt){
-    res.status(200).send(receipt)
+  if (receipt) {
+    res.status(200).send(receipt);
   }
 };
-
-

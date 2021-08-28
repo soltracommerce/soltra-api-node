@@ -2,7 +2,7 @@ import { Response, NextFunction } from "express";
 import colors from "colors/safe";
 import logger from "../startup/logger";
 import ErrorResponse from "../exceptions/httpException";
-import { error } from "winston";
+
 
 const errorMiddleware = (
   err: ErrorResponse,
