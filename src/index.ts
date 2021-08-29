@@ -1,4 +1,4 @@
-import "express-async-errors"; //No need to rap routes middleware around async middleware
+import "express-async-errors"; //No need to rap async middlewares around routes middleware
 import "dotenv/config";
 import express, { Application } from "express";
 import routes from "./startup/routes";
@@ -8,13 +8,11 @@ import connectDB from "./startup/db";
 
 const app: Application = express();
 
-
 // Connect to database
 connectDB();
 
 // routes
 routes(app);
-
 
 // Unhandled Exceptions
 process.on("uncaughtException", (ex: Error) => {
